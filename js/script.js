@@ -27,9 +27,9 @@ document.addEventListener("DOMContentLoaded", () => {
     tabParents.addEventListener('click', event => {
         const target = event.target;
 
-        if(target && target.classList.contains('tabheader__item')) {
+        if (target && target.classList.contains('tabheader__item')) {
             tabs.forEach((tab, index) => {
-                if(target === tab) {
+                if (target === tab) {
                     hideTabContents()
                     showTabContent(index);
                 }
@@ -89,6 +89,7 @@ document.addEventListener("DOMContentLoaded", () => {
             timeInterval = setInterval(updateClock, 1000);
 
         updateClock();
+
         function updateClock() {
             const time = getTimeRemaining(endtime);
 
@@ -133,7 +134,7 @@ document.addEventListener("DOMContentLoaded", () => {
     modalCloseBtn.addEventListener('click', closeModal)
 
     modal.addEventListener('click', (event) => {
-        if (event.target === modal){
+        if (event.target === modal) {
             closeModal()
         }
     })
@@ -145,4 +146,135 @@ document.addEventListener("DOMContentLoaded", () => {
     })
 
     const modalTimerId = setTimeout(openModal, 2000)
+
+    // Class
+    class OfferMenu {
+        constructor(src, alt, title, descr, discount, sale, parentSelector) {
+            this.src = src
+            this.alt = alt
+            this.title = title
+            this.descr = descr
+            this.discount = discount
+            this.sale = sale
+            this.parent = document.querySelector(parentSelector)
+            this.formatToUSD()
+        }
+
+        formatToUSD() {
+            this.discount = this.discount.toLocaleString("en-US", {style: "currency", currency: "USD"});
+            this.sale = this.sale.toLocaleString("en-US", {style: "currency", currency: "USD"});
+        }
+
+        render() {
+            const element = document.createElement('div')
+            element.innerHTML = `
+                <img src='${this.src}' alt="${this.alt}">
+                <div>
+                  <h3>${this.title}</h3>
+                  <p>${this.descr}</p>
+                  <p><del>${this.discount}</del> <span class="primary-text">${this.sale}</span></p>
+                </div>
+            `
+
+            this.parent.append(element)
+        }
+    }
+
+    const offers = [
+        {
+            src: "./img/offer1.png",
+            alt: "Quattro Pasta",
+            title: "Quattro Pasta",
+            descr: "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Nam, quibusdam.",
+            discount: 55,
+            sale: 20,
+        },
+        {
+            src: "./img/offer2.png",
+            alt: "Vegertarian Pasta",
+            title: "Vegertarian Pasta",
+            descr: "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Nam, quibusdam.",
+            discount: 65,
+            sale: 22,
+        },
+        {
+            src: "./img/offer3.png",
+            alt: "Gluten-Free Pasta",
+            title: "Gluten-Free Pasta",
+            descr: "Lorem ipsum dolor sit amet, consectetur adipisicing elit. Nam, quibusdam.",
+            discount: 57,
+            sale: 25,
+        }
+    ]
+
+    offers.forEach(offer => {
+        const {src, alt, title, descr, discount, sale} = offer
+        new OfferMenu(src, alt, title, descr, discount, sale, ".offers-items").render()
+    })
+
+    class DayTime {
+        constructor(src, alt, title, start, end, parentSelector) {
+            this.src = src;
+            this.alt = alt;
+            this.title = title;
+            this.start = start;
+            this.end = end;
+            this.parent = document.querySelector(parentSelector);
+        }
+
+        render() {
+            const element = document.createElement('div');
+
+            let timeDisplay;
+            if (this.start === 'All' && this.end === 'day') {
+                timeDisplay = "All day";
+            } else {
+                timeDisplay = `${this.start} to ${this.end}`;
+            }
+
+            element.innerHTML = `
+                <img src="${this.src}" alt="${this.alt}">
+                <h3>${this.title}</h3>
+                <p>${timeDisplay}</p>
+            `;
+            this.parent.append(element);
+        }
+
+}
+
+    const items = [
+        {
+            src: "./img/breckfastIcon.png",
+            alt: "Breakfast",
+            title: "Breakfast",
+            start: "4 am",
+            end: "8 am",
+        },
+        {
+            src: "./img/lunchIcon.png",
+            alt: "Lunch",
+            title: "Lunch",
+            start: "4 pm",
+            end: "7 pm",
+        },
+        {
+            src: "./img/dinnerIcon.png",
+            alt: "Dinner",
+            title: "Dinner",
+            start: "9 pm",
+            end: "1 am",
+        },
+        {
+            src: "./img/dessertIcon.png",
+            alt: "dessert",
+            title: "Dessert",
+            start: 'All',
+            end: 'day',
+        },
+    ];
+
+    items.forEach(item => {
+        const {src, alt, title, start, end} = item
+        new DayTime(src, alt, title, start, end, '.daytime-items').render()
+    })
 })
