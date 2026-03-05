@@ -109,7 +109,6 @@ document.addEventListener('DOMContentLoaded', () => {
     // Modal
     const modalOpenBtns = document.querySelectorAll('[data-modal]'),
         modal = document.querySelector('.modal'),
-        modalCloseBtn = document.querySelector('[data-modal-close]'),
         modalContent = document.querySelector('.modal__content');
 
     function openModal() {
@@ -130,10 +129,8 @@ document.addEventListener('DOMContentLoaded', () => {
         btn.addEventListener('click', openModal);
     });
 
-    modalCloseBtn.addEventListener('click', closeModal);
-
     modal.addEventListener('click', (event) => {
-        if (event.target === modal) {
+        if (event.target === modal || event.target.getAttribute('data-modal-close') === '') {
             closeModal();
         }
     });
@@ -296,10 +293,9 @@ document.addEventListener('DOMContentLoaded', () => {
     form.addEventListener('submit', (event) => {
         event.preventDefault();
 
-        const statusMessage = document.createElement('div');
-        statusMessage.textContent = message.loading;
-
-        form.append(statusMessage);
+        const loader = document.createElement('div');
+        loader.classList.add('loader', 'loader_center');
+        form.append(loader);
 
         const formData = new FormData(form);
 
@@ -318,12 +314,34 @@ document.addEventListener('DOMContentLoaded', () => {
                 text: `Name: ${object.name}, Phone: ${object.phone}`,
             }),
         })
-            .then(() => (statusMessage.textContent = message.success))
-            .catch(() => (statusMessage.textContent = message.failure))
-            .finally(() => {
-                setTimeout(() => {
-                    statusMessage.remove();
-                }, 2000);
-            });
+            .then(() => {
+                showStatusMessage(message.success);
+                form.reset();
+            })
+            .catch(() => showStatusMessage(message.failure))
+            .finally(() => loader.remove());
     });
+
+    function showStatusMessage(message) {
+        const modalDialog = document.querySelector('.modal__dialog');
+        modalDialog.classList.add('hide');
+        openModal();
+
+        const statusModal = document.createElement('div');
+        statusModal.classList.add('modal__dialog');
+        statusModal.innerHTML = `
+            <div class="modal__content">
+                <div data-modal-close class="modal__close">&times;</div>
+                <div class="modal__title">${message}</div>
+            </div>
+        `;
+
+        document.querySelector('.modal').append(statusModal);
+
+        setTimeout(() => {
+            statusModal.remove();
+            modalDialog.classList.remove('hide');
+            closeModal();
+        }, 4000);
+    }
 });

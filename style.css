@@ -918,6 +918,13 @@ form button {
     animation: rotation 1s linear infinite;
 }
 
+.loader_center {
+    display: block;
+    margin: 20px auto 0 auto;
+    width: 20px;
+    height: 20px;
+}
+
 @keyframes rotation {
     0% {
         transform: rotate(0deg);
